@@ -43,3 +43,6 @@ public/icons/icon-*.png
 *.zip
 *.tar
 *.tgz
+
+# Local Netlify folder
+.netlify
