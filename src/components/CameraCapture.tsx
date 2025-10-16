@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { analyzeFaceFromVideo } from '../analysis'
 import type { AnalysisResult } from '../types'
+import { pushToGTM } from '@/utils/gtm'
 
 export default function CameraCapture({ onAnalysis }:{ onAnalysis:(a:AnalysisResult)=>void }){
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -27,6 +28,12 @@ export default function CameraCapture({ onAnalysis }:{ onAnalysis:(a:AnalysisRes
     const res = await analyzeFaceFromVideo(videoRef.current)
     onAnalysis(res)
     setStatus(`Undertone: ${res.undertone}, Season: ${res.season}`)
+    
+    pushToGTM("analyze_face", {
+    undertone: res.undertone,
+    season: res.season,
+    timestamp: new Date().toISOString()
+  })
   }
 
   return (
