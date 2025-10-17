@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { analyzeFaceFromVideo } from '../analysis'
 import type { AnalysisResult } from '../types'
-import { pushToGTM } from '../utils/gtm'
+
+import { faLogEvent } from  "../firebase"
+import { clamp, rgbToHex } from '../utils/color'
 
 export default function CameraCapture({ onAnalysis }:{ onAnalysis:(a:AnalysisResult)=>void }){
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -22,19 +24,32 @@ export default function CameraCapture({ onAnalysis }:{ onAnalysis:(a:AnalysisRes
     }
   },[active])
 
-  async function scan(){
-    if(!videoRef.current) return
+  async function scan() {
+    if (!videoRef.current) return
     setStatus('Analyzing…')
-    const res = await analyzeFaceFromVideo(videoRef.current)
-    onAnalysis(res)
-    setStatus(`Undertone: ${res.undertone}, Season: ${res.season}`)
+    try {
+      const res = await analyzeFaceFromVideo(videoRef.current)
+      const d = (Array.isArray((res as any).dominant) && (res as any).dominant[0]) || { r: 0, g: 0, b: 0 }
+      const color_hex = rgbToHex(d.r, d.g, d.b)
+      const color_rgb = `rgb(${clamp(d.r)}, ${clamp(d.g)}, ${clamp(d.b)})`
+      onAnalysis(res)
+      setStatus(`Undertone: ${res.undertone}, Season: ${res.season}`)
+      console.info('Analysis result:', res)
 
-    pushToGTM("analyze_face", {
-    undertone: res.undertone,
-    season: res.season,
-    timestamp: new Date().toISOString()
-  })
+      // ✅ Firebase Analytics event
+      faLogEvent('analyze_success', {
+        undertone: res.undertone,
+        season: res.season,
+        color_hex,
+        color_rgb, 
+        timestamp: new Date().toISOString(),
+      })
+    } catch (err) {
+      console.error(err)
+      setStatus('Analyze failed')
+    }
   }
+
 
   return (
     <div className="camera">

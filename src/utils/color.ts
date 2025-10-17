@@ -23,3 +23,7 @@ export function distance(a:PaletteColor,b:PaletteColor){
   const dr=a.r-b.r,dg=a.g-b.g,db=a.b-b.b
   return Math.sqrt(dr*dr+dg*dg+db*db)
 }
+export function clamp(n: number) { return Math.max(0, Math.min(255, Math.round(n))) }
+export function rgbToHex(r: number, g: number, b: number) {
+  return '#' + [r, g, b].map(v => clamp(v).toString(16).padStart(2, '0')).join('')
+}

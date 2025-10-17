@@ -1,21 +1,18 @@
-# example netlify.toml
 [build]
   command = "pnpm run build"
-  functions = "netlify/functions"
   publish = "dist"
+  functions = "netlify/functions"
 
-  ## Uncomment to use this redirect for Single Page Applications like create-react-app.
-  ## Not needed for static site generators.
-  #[[redirects]]
-  #  from = "/*"
-  #  to = "/index.html"
-  #  status = 200
+  [[redirects]]
+    from = "/*"
+    to = "/index.html"
+    status = 200
 
-  ## (optional) Settings for Netlify Dev
-  ## https://github.com/netlify/cli/blob/main/docs/netlify-dev.md#project-detection
-  #[dev]
-  #  command = "yarn start" # Command to start your dev server
-  #  port = 3000 # Port that the dev server will be listening on
-  #  publish = "dist" # Folder with the static content for _redirect file
-
-  ## more info on configuring this file: https://ntl.fyi/file-based-build-config
+[build.environment]
+  VITE_FIREBASE_API_KEY = "AIzaSyBqswMeVXm2kGE4QI34VVAE16fwuTOIJ5c"
+  VITE_FIREBASE_AUTH_DOMAIN = "ai-ootd-web.firebaseapp.com"
+  VITE_FIREBASE_PROJECT_ID = "ai-ootd-web"
+  VITE_FIREBASE_STORAGE_BUCKET = "ai-ootd-web.firebasestorage.app"
+  VITE_FIREBASE_MESSAGING_SENDER_ID = "639750412717"
+  VITE_FIREBASE_APP_ID = "1:639750412717:web:20d1af44391f1786a76924"
+  VITE_FIREBASE_MEASUREMENT_ID = "G-J00HY3RM6L"
