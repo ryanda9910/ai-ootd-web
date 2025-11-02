@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import CameraCapture from './components/CameraCapture'
-import PaletteSwatches from './components/PaletteSwatches'
-import IdeaCard from './components/IdeaCard'
+import React, { useEffect, useState, Suspense } from 'react'
+const CameraCapture = React.lazy(() => import('./components/CameraCapture'))
+const PaletteSwatches = React.lazy(() => import('./components/PaletteSwatches'))
+const IdeaCard = React.lazy(() => import('./components/IdeaCard'))
 import type { AnalysisResult, UserPrefs } from './types'
 import { buildIdea } from './recommender'
 
@@ -31,24 +31,36 @@ export default function App(){
 
       <section className="panel">
         <h2>2) Analyze your face</h2>
-        <CameraCapture onAnalysis={setAnalysis} />
+        <Suspense fallback={<div className="muted">Loading camera…</div>}>
+          <CameraCapture onAnalysis={setAnalysis} />
+        </Suspense>
         {analysis && (
           <div className="analysis">
             <div className="row">
               <span>Undertone: <b>{analysis.undertone}</b></span>
               <span>Season: <b>{analysis.season}</b></span>
             </div>
-            <PaletteSwatches title="Dominant from face" colors={analysis.dominant} />
+            <Suspense fallback={<div className="muted">Loading palette…</div>}>
+              <PaletteSwatches title="Dominant from face" colors={analysis.dominant} />
+            </Suspense>
           </div>
         )}
       </section>
 
       <section className="panel">
         <h2>3) Today’s idea</h2>
-        {idea? <>
-          <PaletteSwatches title="Suggested palette" colors={idea.palette} />
-          <IdeaCard title={idea.title} description={idea.description} tips={idea.tips} />
-        </> : <p className="muted">Scan your face to generate your OOTD palette and idea.</p>}
+        {idea ? (
+          <>
+            <Suspense fallback={<div className="muted">Loading suggested palette…</div>}>
+              <PaletteSwatches title="Suggested palette" colors={idea.palette} />
+            </Suspense>
+            <Suspense fallback={<div className="muted">Loading idea card…</div>}>
+              <IdeaCard title={idea.title} description={idea.description} tips={idea.tips} />
+            </Suspense>
+          </>
+        ) : (
+          <p className="muted">Scan your face to generate your OOTD palette and idea.</p>
+        )}
       </section>
 
       <footer>

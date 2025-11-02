@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/analysis.ts","./src/firebase.ts","./src/main.tsx","./src/recommender.ts","./src/types.ts","./src/vite-env.d.ts","./src/components/cameracapture.tsx","./src/components/ideacard.tsx","./src/components/paletteswatches.tsx","./src/utils/color.ts","./src/utils/gtm.ts","./src/utils/kmeans.ts"],"version":"5.9.3"}
